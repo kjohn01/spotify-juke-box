@@ -1,5 +1,4 @@
 const CLIENT_ID = 'f7f01afe31be46a78188df89b35d0912';
 const REDIRECT_URI = 'http://localhost:3000';
-export { CLIENT_ID, REDIRECT_URI };
-
-// http://localhost:3000/?code=AQCZFnpBkPdN49rN3A7rPf7HcN7bsxP4qhc9O67QWFsyRvol4ztf3_nThmGC-jfmir9cB2k8fAxtLAWkgIroeh-2tdhBNdvJpGEsaJACne7cYnh3nPXhOu9a89iUj0qxFZlUF4xpaboF9RhV44YPSq6r08nHc7-gTGhw-1kXKtES3QzoQ-07gYOFGh8lhKd6LULgcCi3FEJKPYQ0P9ClH8a3Pis6qU8pPkUX3RLhADj1G1d3wC-CaMe6Vig2jBb1wZPBS3sFvd-4vsRPMPhsRq6-Jwc98ui9JqLjdmB1-3HiAnyOcQEpfPudTLRLfIcXrgKlX4lQGdaJWbhmBKHkQ7_e9GhRtQ
+const SERVER_URL = 'http://localhost:3001';
+export { CLIENT_ID, REDIRECT_URI, SERVER_URL };

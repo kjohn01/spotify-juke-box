@@ -9,7 +9,7 @@ export default function Dashboard({ code }) {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          {code}
+          {accessToken}
         </p>
         <a
           className="App-link"

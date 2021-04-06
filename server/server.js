@@ -29,7 +29,23 @@ app.post('/login', (req, res) => {
     .catch((err) => {
         console.error(err);
         res.sendStatus(400);
+    });
+});
+
+app.post('/refresh', (req, res) => {
+    const refreshToken = req.body.refreshToken;
+    const spotifyAPI = new SpotifyWebApi({ ...credentials, refreshToken });
+    spotifyAPI.refreshAccessToken()
+    .then(data => {
+        res.json({
+            accessToken: data.body.access_token,
+            expiresIn: data.body.expires_in
+        })
     })
+    .catch((err) => {
+        console.error(err);
+        res.sendStatus(400);
+    });
 });
 
 app.listen(port, () => {
