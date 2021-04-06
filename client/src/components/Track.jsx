@@ -1,8 +1,11 @@
-import React from 'react';
+// import React from 'react';
 
-export default function Track({ track }) {
+export default function Track({ track, playTrack }) {
     const imgSize = 64
-    const handleClick = () => {};
+    const handleClick = () => {
+        playTrack(track);
+    };
+
     return (
         <div className="d-flex align-items-center my-2" style={{ cursor: "pointer" }} onClick={handleClick}>
             <img src={track.albumImgUrl} style={{ height: `${imgSize}px`, width: `${imgSize}px` }} alt="album cover" />
