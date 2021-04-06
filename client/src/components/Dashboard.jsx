@@ -64,7 +64,9 @@ export default function Dashboard({ code }) {
       <div className="flex-grow-1 my-2">
         {tracks}
       </div>
-      <div><Player token={accessToken} uris={playingTrack?.uri} /></div>
+      <div className="fixed-bottom">
+        <Player token={accessToken} uris={playingTrack?.uri} />
+      </div>
     </Container>
   );
 }

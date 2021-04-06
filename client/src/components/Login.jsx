@@ -1,4 +1,3 @@
-// import React from 'react';
 import { CLIENT_ID, REDIRECT_URI } from '../constants';
 import { Container, Button } from 'react-bootstrap';
 
