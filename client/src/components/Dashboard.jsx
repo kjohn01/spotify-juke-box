@@ -6,6 +6,7 @@ import { CLIENT_ID, SERVER_URL } from '../constants';
 import Track from './Track';
 import Player from './Player';
 import Lyrics from './Lyrics';
+import PlayList from './PlayList';
 
 const spotifyAPI = new SpotifyWebApi({ clientId: CLIENT_ID });
 
@@ -13,14 +14,18 @@ export default function Dashboard({ code }) {
   const accessToken = useAuth(code);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [playList, setPlayList] = useState([]);
   const [playingTrack, setPlayingTrack] = useState();
   const [lyrics, setLyrics] = useState("");
+  const [showLyrics, setShowLyrics] = useState(false);
+  const [hideSearchResults, setHideSearchResults] = useState(true);
 
   const playTrack = useCallback((track) => {
     setPlayingTrack(track);
+    if (playList.length === 0) setPlayList(searchResults);
     setSearch('');
     setLyrics("");
-  }, []);
+  }, [playList.length, searchResults]);
 
   const fetchLyrics = useCallback(async (playingTrack) =>{
     const params = {
@@ -33,14 +38,20 @@ export default function Dashboard({ code }) {
     return response.json();
   }, []);
 
+  // User login and gain spotify access
   useEffect(() => {
     if (!accessToken) return;
     spotifyAPI.setAccessToken(accessToken);
     return () => {};
   }, [accessToken]);
 
+  // Handle search results
   useEffect(() => {
-    if (search.length === 0) return setSearchResults([]);
+    if (search.length === 0) {
+      setSearchResults([]);
+      setHideSearchResults(true);
+      return;
+    }
     if (!accessToken) return;
     spotifyAPI.searchTracks(search)
     .then(res => {
@@ -58,6 +69,7 @@ export default function Dashboard({ code }) {
           albumImgUrl: findSmallestImg.url
         }
       }));
+      setHideSearchResults(false);
     })
     .catch((err) => {
       console.error(err);
@@ -88,7 +100,14 @@ export default function Dashboard({ code }) {
         onChange={(e) => setSearch(e.target.value)} 
       />
       <div className="flex-grow-1 my-2">
-        {searchResults.length > 0 ? tracks : <Lyrics lyrics={lyrics} />}
+        {searchResults.length > 0 && !hideSearchResults 
+          ? tracks 
+          : playingTrack && showLyrics 
+            ? <Lyrics lyrics={lyrics} />
+            : playingTrack && playList.length > 0
+              ? <PlayList playList={playList} playingTrack={playingTrack} setShowLyrics={setShowLyrics} playTrack={playTrack} />
+              : <h1>Go play something</h1>
+        }
       </div>
       <div className="fixed-bottom">
         <Player token={accessToken} uris={playingTrack?.uri} />
