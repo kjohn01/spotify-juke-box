@@ -10,7 +10,7 @@ export default function PlayList({ playingTrack, playList, playTrack, setShowLyr
     }, [playList, playingTrack.trackId])
 
     const tracks = useMemo(() => playList.map(track => <div key={track.trackId}>
-        <img src={track.albumImgUrl} alt="album cover" />
+        <img src={track.coverUrl} alt="album cover" className="img-fluid" />
         <h3 className="legend">{track.title}</h3>
         <p>{track.artist}</p>
     </div>), [playList]);
@@ -31,12 +31,15 @@ export default function PlayList({ playingTrack, playList, playTrack, setShowLyr
     return (
         startIndex >= 0 && <Carousel 
             showArrows={true}  
-            // emulateTouch={true}
+            emulateTouch={true}
             infiniteLoop={true} 
             onChange={onChange} 
             onClickItem={onClickItem} 
             onClickThumb={onClickThumb}
             selectedItem={startIndex}
+            showStatus={false}
+            showIndicators={false}
+            showThumbs={false}
         >
             {tracks}
         </Carousel>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import useAuth from '../hooks/useAuth';
-import { Container, Form } from 'react-bootstrap';
+import { Container, Form, Button } from 'react-bootstrap';
+import { ArrowLeft } from 'react-bootstrap-icons';
 import SpotifyWebApi from 'spotify-web-api-node';
 import { CLIENT_ID, SERVER_URL } from '../constants';
 import Track from './Track';
@@ -61,12 +62,18 @@ export default function Dashboard({ code }) {
           return smallest;
         }, track.album.images[0]);
 
+        const findBiggestImg = track.album.images.reduce((biggest, img) => {
+          if (biggest.height < img.height) return img;
+          return biggest;
+        }, track.album.images[0]);
+
         return {
           trackId: track.id,
           title: track.name,
           artist: track.artists[0].name,
           uri: track.uri,
-          albumImgUrl: findSmallestImg.url
+          albumImgUrl: findSmallestImg.url,
+          coverUrl: findBiggestImg.url
         }
       }));
       setHideSearchResults(false);
@@ -92,24 +99,27 @@ export default function Dashboard({ code }) {
   const tracks = useMemo(() => searchResults.map(track => <Track track={track} key={track.trackId} playTrack={playTrack} />), [searchResults, playTrack]);
 
   return (
-    <Container className="d-flex flex-column py-2" style={{ height: '100vh' }}>
+    <Container className="d-flex flex-column justify-content-between py-2" style={{ height: '100vh' }}>
       <Form.Control 
         type="search" 
         placeholder="Search Songs / Artists"
         value={search}
         onChange={(e) => setSearch(e.target.value)} 
       />
-      <div className="flex-grow-1 my-2">
+      <div className="my-2 overflow-auto position-relative">
         {searchResults.length > 0 && !hideSearchResults 
           ? tracks 
           : playingTrack && showLyrics 
-            ? <Lyrics lyrics={lyrics} />
+            ? <div>
+                <Button className="fixed-top ml-lg-5 ml-sm-4 mt-5 text-black-50 text-center" variant="link" onClick={() => setShowLyrics(false)}><ArrowLeft/> back</Button>
+                <Lyrics lyrics={lyrics} setShowLyrics={setShowLyrics} />
+            </div>
             : playingTrack && playList.length > 0
               ? <PlayList playList={playList} playingTrack={playingTrack} setShowLyrics={setShowLyrics} playTrack={playTrack} />
               : <h1>Go play something</h1>
         }
       </div>
-      <div className="fixed-bottom">
+      <div className="">
         <Player token={accessToken} uris={playingTrack?.uri} />
       </div>
     </Container>
