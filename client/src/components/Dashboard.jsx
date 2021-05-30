@@ -21,7 +21,7 @@ export default function Dashboard({ code }) {
   const [hideSearchResults, setHideSearchResults] = useState(true);
   const [playingState, dispatch] = useReducer(playlistReducer, initPlayingState);
 
-  const { playlist, playingTrack } = playingState;
+  const { playlist, playingTrack, playingIndex } = playingState;
 
   // SET AND PLAY
   const playTrack = useCallback((index) => {
@@ -107,6 +107,8 @@ export default function Dashboard({ code }) {
 
   const tracks = useMemo(() => searchResults.map((track, index) => <Track track={track} key={track.trackId} playTrack={playTrack} index={index} />), [searchResults, playTrack]);
 
+  const uris = useMemo(() => playlist.map((track) => track.uri), [playlist]);
+
   return (
     <Container className="d-flex flex-column justify-content-between py-2" style={{ height: '100vh' }}>
       <Form.Control 
@@ -118,7 +120,7 @@ export default function Dashboard({ code }) {
       <div className="my-2 overflow-auto position-relative">
         { searchResults.length > 0 && !hideSearchResults 
           ? tracks 
-          : playingTrack && showLyrics 
+          : playingState.playingTrack && showLyrics 
             ? <div>
                 <Button 
                   className="fixed-top ml-lg-5 ml-sm-4 mt-5 text-black-50 text-center" 
@@ -129,7 +131,7 @@ export default function Dashboard({ code }) {
                 </Button>
                 <Lyrics lyrics={lyrics} setShowLyrics={setShowLyrics} />
             </div>
-            : playingTrack && playlist.length > 0
+            : playingState.playingTrack && playingState.playlist.length > 0
               ? <Playlist 
                   setShowLyrics={setShowLyrics} 
                   playingState={playingState}
@@ -139,7 +141,15 @@ export default function Dashboard({ code }) {
         }
       </div>
       <div>
-        <Player token={accessToken} uris={playingTrack?.uri} />
+        {
+          playingState.playingTrack && <Player 
+            token={accessToken} 
+            uris={uris} 
+            playingState={playingState}
+            offset={playingIndex} 
+            dispatch={dispatch}
+          />
+        }
       </div>
     </Container>
   );
