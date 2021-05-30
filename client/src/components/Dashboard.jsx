@@ -3,14 +3,29 @@ import useAuth from '../hooks/useAuth';
 import { Container, Form, Button } from 'react-bootstrap';
 import { ArrowLeft } from 'react-bootstrap-icons';
 import SpotifyWebApi from 'spotify-web-api-node';
+import { useSwipeable } from 'react-swipeable';
 import { CLIENT_ID, SERVER_URL } from '../constants';
 import { initPlayingState, playlistReducer } from '../reducers/playlistReducer';
 import Track from './Track';
 import Player from './Player';
 import Lyrics from './Lyrics';
 import Playlist from './Playlist';
+import { ReactComponent as Logo } from '../logo.svg';
 
 const spotifyAPI = new SpotifyWebApi({ clientId: CLIENT_ID });
+
+const swipeConfig = {
+  delta: 10,                            
+  // min distance(px) before a swipe starts
+  preventDefaultTouchmoveEvent: false,  
+  // call e.preventDefault *See Details*
+  trackTouch: true,                     
+  // track touch input
+  trackMouse: false,                    
+  // track mouse input
+  rotationAngle: 0,                     
+  // set a rotation angle
+};
 
 export default function Dashboard({ code }) {
   const accessToken = useAuth(code);
@@ -20,6 +35,11 @@ export default function Dashboard({ code }) {
   const [showLyrics, setShowLyrics] = useState(false);
   const [hideSearchResults, setHideSearchResults] = useState(true);
   const [playingState, dispatch] = useReducer(playlistReducer, initPlayingState);
+
+  const handlers = useSwipeable({
+    onSwipedRight: () => setShowLyrics(false),
+    ...swipeConfig,
+  });
 
   const { playlist, playingTrack, playingIndex } = playingState;
 
@@ -117,11 +137,11 @@ export default function Dashboard({ code }) {
         value={search}
         onChange={(e) => setSearch(e.target.value)} 
       />
-      <div className="my-2 overflow-auto position-relative">
+      <div className="my-2 overflow-auto position-relative h-100">
         { searchResults.length > 0 && !hideSearchResults 
           ? tracks 
           : playingState.playingTrack && showLyrics 
-            ? <div>
+            ? <div {...handlers} className="h-100 d-flex flex-column justify-content-center">
                 <Button 
                   className="fixed-top ml-lg-5 ml-sm-4 mt-5 text-black-50 text-center" 
                   variant="link" 
@@ -129,7 +149,7 @@ export default function Dashboard({ code }) {
                 >
                   <ArrowLeft/> back
                 </Button>
-                <Lyrics lyrics={lyrics} setShowLyrics={setShowLyrics} />
+                <Lyrics lyrics={lyrics} />
             </div>
             : playingState.playingTrack && playingState.playlist.length > 0
               ? <Playlist 
@@ -137,7 +157,10 @@ export default function Dashboard({ code }) {
                   playingState={playingState}
                   dispatch={dispatch}
                 />
-              : <h1>Go play something</h1>
+              : <div className="d-flex flex-column h-100 justify-content-center align-items-center">
+                <Logo alt="logo" className="w-25 my-3 my-md-5" />
+                <h1 className="text-center my-5">Go play something</h1>
+              </div>
         }
       </div>
       <div>
