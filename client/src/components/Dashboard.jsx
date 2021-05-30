@@ -1,13 +1,14 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useReducer } from 'react';
 import useAuth from '../hooks/useAuth';
 import { Container, Form, Button } from 'react-bootstrap';
 import { ArrowLeft } from 'react-bootstrap-icons';
 import SpotifyWebApi from 'spotify-web-api-node';
 import { CLIENT_ID, SERVER_URL } from '../constants';
+import { initPlayingState, playlistReducer } from '../reducers/playlistReducer';
 import Track from './Track';
 import Player from './Player';
 import Lyrics from './Lyrics';
-import PlayList from './PlayList';
+import Playlist from './Playlist';
 
 const spotifyAPI = new SpotifyWebApi({ clientId: CLIENT_ID });
 
@@ -15,18 +16,24 @@ export default function Dashboard({ code }) {
   const accessToken = useAuth(code);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [playList, setPlayList] = useState([]);
-  const [playingTrack, setPlayingTrack] = useState();
   const [lyrics, setLyrics] = useState("");
   const [showLyrics, setShowLyrics] = useState(false);
   const [hideSearchResults, setHideSearchResults] = useState(true);
+  const [playingState, dispatch] = useReducer(playlistReducer, initPlayingState);
 
-  const playTrack = useCallback((track) => {
-    setPlayingTrack(track);
-    if (playList.length === 0) setPlayList(searchResults);
+  const { playlist, playingTrack } = playingState;
+
+  // SET AND PLAY
+  const playTrack = useCallback((index) => {
+    if (!searchResults || index < 0 || index >= searchResults.length) return;
+    dispatch({
+      type: 'SET_AND_PLAY',
+      index,
+      playlist: searchResults
+    });
     setSearch('');
     setLyrics("");
-  }, [playList.length, searchResults]);
+  }, [searchResults]); // Need CHeck!
 
   const fetchLyrics = useCallback(async (playingTrack) =>{
     const params = {
@@ -72,6 +79,7 @@ export default function Dashboard({ code }) {
           title: track.name,
           artist: track.artists[0].name,
           uri: track.uri,
+          trackLength: track.duration_ms,
           albumImgUrl: findSmallestImg.url,
           coverUrl: findBiggestImg.url
         }
@@ -84,6 +92,7 @@ export default function Dashboard({ code }) {
     return () => {};
   }, [search, accessToken]);
 
+  // Fetch lyrics on change of playingTrack
   useEffect(() => {
     if (!accessToken || !playingTrack) return;
     fetchLyrics(playingTrack)
@@ -94,9 +103,9 @@ export default function Dashboard({ code }) {
       console.error(err);
     });
     return () => {};
-  }, [playingTrack, accessToken, fetchLyrics])
+  }, [accessToken, fetchLyrics, playingTrack]);
 
-  const tracks = useMemo(() => searchResults.map(track => <Track track={track} key={track.trackId} playTrack={playTrack} />), [searchResults, playTrack]);
+  const tracks = useMemo(() => searchResults.map((track, index) => <Track track={track} key={track.trackId} playTrack={playTrack} index={index} />), [searchResults, playTrack]);
 
   return (
     <Container className="d-flex flex-column justify-content-between py-2" style={{ height: '100vh' }}>
@@ -107,19 +116,29 @@ export default function Dashboard({ code }) {
         onChange={(e) => setSearch(e.target.value)} 
       />
       <div className="my-2 overflow-auto position-relative">
-        {searchResults.length > 0 && !hideSearchResults 
+        { searchResults.length > 0 && !hideSearchResults 
           ? tracks 
           : playingTrack && showLyrics 
             ? <div>
-                <Button className="fixed-top ml-lg-5 ml-sm-4 mt-5 text-black-50 text-center" variant="link" onClick={() => setShowLyrics(false)}><ArrowLeft/> back</Button>
+                <Button 
+                  className="fixed-top ml-lg-5 ml-sm-4 mt-5 text-black-50 text-center" 
+                  variant="link" 
+                  onClick={() => setShowLyrics(false)}
+                >
+                  <ArrowLeft/> back
+                </Button>
                 <Lyrics lyrics={lyrics} setShowLyrics={setShowLyrics} />
             </div>
-            : playingTrack && playList.length > 0
-              ? <PlayList playList={playList} playingTrack={playingTrack} setShowLyrics={setShowLyrics} playTrack={playTrack} />
+            : playingTrack && playlist.length > 0
+              ? <Playlist 
+                  setShowLyrics={setShowLyrics} 
+                  playingState={playingState}
+                  dispatch={dispatch}
+                />
               : <h1>Go play something</h1>
         }
       </div>
-      <div className="">
+      <div>
         <Player token={accessToken} uris={playingTrack?.uri} />
       </div>
     </Container>

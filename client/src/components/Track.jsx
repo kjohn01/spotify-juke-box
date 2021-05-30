@@ -1,7 +1,7 @@
-export default function Track({ track, playTrack }) {
+export default function Track({ track, playTrack, index }) {
     const imgSize = 64
     const handleClick = () => {
-        playTrack(track);
+        playTrack(index);
     };
 
     return (
