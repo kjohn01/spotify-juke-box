@@ -15,7 +15,7 @@ const playlistReducer = (state, action) => {
             playlist,
             playingTrack: playlist[i]
         };
-      case 'PREVIOUS':
+      case 'PREV':
         i = playingIndex > 0 ? playingIndex-1 : playlist.length-1;
         return {
             playingIndex: i,

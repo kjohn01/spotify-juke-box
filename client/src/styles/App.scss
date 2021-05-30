@@ -1,1 +1,24 @@
 @import "../../node_modules/bootstrap/scss/bootstrap";
+
+.prev, .next {
+    z-index: -1;
+}
+
+.current {
+    position: relative;
+    z-index: 2;
+    transform: translateX(-23%);
+}
+
+@include media-breakpoint-up(md) {
+    .current {
+      width: 75%;
+      transform: none;
+    }
+  }
+
+@include media-breakpoint-up(lg) {
+    .current {
+      width: auto;
+    }
+  }
