@@ -131,25 +131,29 @@ export default function Dashboard({ code }) {
 
   return (
     <Container className="d-flex flex-column justify-content-between py-2" style={{ height: '100vh' }}>
-      <Form.Control 
-        type="search" 
-        placeholder="Search Songs / Artists"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)} 
-      />
-      <div className="d-flex flex-column h-100 justify-content-center my-2 overflow-auto">
+      <div className="d-flex flex-column align-items-start">
+        <Form.Control 
+          type="search" 
+          placeholder="Search Songs / Artists"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)} 
+        />
+        {
+          showLyrics && <Button 
+            className="p-0 border-0 mt-1 text-black-50 text-center back" 
+            variant="link" 
+            onClick={() => setShowLyrics(false)}
+          >
+            <ArrowLeft/> 
+            <p className="pl-2 d-none d-md-inline">back</p>
+          </Button>
+        }
+      </div>
+      <div className="my-2 overflow-auto h-100">
         { searchResults.length > 0 && !hideSearchResults 
           ? tracks 
           : playingState.playingTrack && showLyrics 
-            ? <div {...handlers} className="h-100 d-flex flex-column justify-content-center">
-                <Button 
-                  className="p-0 border-0 text-black-50 text-center back" 
-                  variant="link" 
-                  onClick={() => setShowLyrics(false)}
-                >
-                  <ArrowLeft/> 
-                  <p className="pl-2 d-none d-md-inline">back</p>
-                </Button>
+            ? <div {...handlers} className="h-100">
                 <Lyrics lyrics={lyrics} />
             </div>
             : playingState.playingTrack && playingState.playlist.length > 0

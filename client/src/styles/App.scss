@@ -27,9 +27,7 @@
     }
 
     .back {
-      top: 3rem;
-      left: 3rem;
-      bottom: unset;
+      position: static;
     }
 }
 
@@ -37,16 +35,4 @@
     .current {
       width: auto;
     }
-}
-
-@include media-breakpoint-up(xl) {
-  .back {
-    left: 8rem;
-  }
-}
-
-@include media-breakpoint-up(xxl) {
-  .back {
-    left: 9rem;
-  }
 }

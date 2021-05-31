@@ -24,7 +24,7 @@ export default function Playlist({ setShowLyrics, playingState, dispatch }) {
             className="prev h-75 d-none d-md-block"
             src={prevTrack.coverUrl} 
             alt="next"
-            // onClick={() => dispatch('NEXT')}
+            // onClick={() => dispatch('PREV')}
         />
     }, [playingIndex, playlist]);
 
@@ -41,7 +41,7 @@ export default function Playlist({ setShowLyrics, playingState, dispatch }) {
 
     return (
         <Carousel 
-            className="w-100 overflow-hidden"
+            className="overflow-hidden"
             activeIndex={playingIndex} 
             prevIcon={prevIcon()}
             nextIcon={nextIcon()}
