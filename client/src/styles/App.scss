@@ -10,15 +10,43 @@
     transform: translateX(-23%);
 }
 
+.back {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 1rem;
+}
+
+.lyrics {
+  white-space: pre;
+}
+
 @include media-breakpoint-up(md) {
     .current {
       width: 75%;
       transform: none;
     }
-  }
+
+    .back {
+      top: 3rem;
+      left: 3rem;
+      bottom: unset;
+    }
+}
 
 @include media-breakpoint-up(lg) {
     .current {
       width: auto;
     }
+}
+
+@include media-breakpoint-up(xl) {
+  .back {
+    left: 8rem;
   }
+}
+
+@include media-breakpoint-up(xxl) {
+  .back {
+    left: 9rem;
+  }
+}

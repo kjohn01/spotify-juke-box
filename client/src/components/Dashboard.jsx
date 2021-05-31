@@ -137,17 +137,18 @@ export default function Dashboard({ code }) {
         value={search}
         onChange={(e) => setSearch(e.target.value)} 
       />
-      <div className="my-2 overflow-auto position-relative h-100">
+      <div className="d-flex flex-column h-100 justify-content-center my-2 overflow-auto">
         { searchResults.length > 0 && !hideSearchResults 
           ? tracks 
           : playingState.playingTrack && showLyrics 
             ? <div {...handlers} className="h-100 d-flex flex-column justify-content-center">
                 <Button 
-                  className="fixed-top ml-lg-5 ml-sm-4 mt-5 text-black-50 text-center" 
+                  className="p-0 border-0 text-black-50 text-center back" 
                   variant="link" 
                   onClick={() => setShowLyrics(false)}
                 >
-                  <ArrowLeft/> back
+                  <ArrowLeft/> 
+                  <p className="pl-2 d-none d-md-inline">back</p>
                 </Button>
                 <Lyrics lyrics={lyrics} />
             </div>
