@@ -9,7 +9,7 @@ import { initPlayingState, playlistReducer } from '../reducers/playlistReducer';
 import Track from './Track';
 import Player from './Player';
 import Lyrics from './Lyrics';
-import Playlist from './Playlist';
+import PlayList from './PlayList';
 import { ReactComponent as Logo } from '../logo.svg';
 
 const spotifyAPI = new SpotifyWebApi({ clientId: CLIENT_ID });
@@ -157,7 +157,7 @@ export default function Dashboard({ code }) {
                 <Lyrics lyrics={lyrics} />
             </div>
             : playingState.playingTrack && playingState.playlist.length > 0
-              ? <Playlist 
+              ? <PlayList 
                   setShowLyrics={setShowLyrics} 
                   playingState={playingState}
                   dispatch={dispatch}

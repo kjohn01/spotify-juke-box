@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { Carousel } from 'react-bootstrap';
 
-export default function Playlist({ setShowLyrics, playingState, dispatch }) {
+export default function PlayList({ setShowLyrics, playingState, dispatch }) {
     const { playlist, playingIndex, playingTrack } = playingState;
 
     const tracks = useMemo(() => playlist.map(track => <Carousel.Item key={track.trackId}>
